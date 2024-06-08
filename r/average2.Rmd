@@ -1,0 +1,70 @@
+#ファクター型
+```{r}
+iris|>str()
+
+```
+
+
+## サンプルコード
+- `factor`関数を使うとファクター型のベクトルに変換できる
+- ファクター型は、内部に`levels`という情報を持つ
+- `levels`によってデータの並び順を定義できる
+
+
+```{r}
+color<-c("red","yellow","yellow","red","green")
+color
+
+color_fc<-factor(color)
+color_fc
+
+str(color_fc)
+```
+
+#ファクター型の特徴
+-ファクター型はlevelsに指定された値のみ
+
+```{r}
+color_fc
+color_fc[1] <- "blue" # levelsに存在しないデータは追加できない
+color_fc
+```
+```{r}
+color_fc
+sort(color_fc)
+```
+```{r}
+color # 文字列ベクトル
+factor(color, levels = c("red", "yellow", "green"))
+color_fc
+sort(color_fc)
+```
+```{r}
+color # 文字列ベクトル
+factor(color, levels = c("red", "yellow", "green"),ordered = T)
+color_fc >"yellow"
+
+
+```
+```{r}
+fruits_df<-data.frame(
+  name=c("Apple","Lemon","banana","Cherry","Melon"),
+  color=c("red","yellow","yellow","red","green"),
+  price=c(100,100,200,300,1000)
+)
+fruits_df
+```
+```{r}
+fruits_df$color=factor(fruits_df$color,levels=c("red","yellow","green"))
+fruits_df
+
+```
+
+
+```{r}
+order(fruits_df$color)
+```
+
+```{r}
+fruits_df[order(fruits_df$color),]
+```

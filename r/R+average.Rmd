@@ -1,0 +1,62 @@
+
+# 2変数データの契約
+- 身長と体重のような、2つの変数の組み合わせについて考える
+- たとえば、irisだと、sepal.Lengthとsepal.Widthに関係性はあるのか
+- 2変数の契約の場合は、1変数の場合と同様に、数値やグラフで説明できる
+
+## 散布図
+- 2つの変数を横軸（x軸）と縦軸（y軸）に対応させた図
+- 一目でデータを見ることができる
+- 2つの変数の関係性を把握するために使う
+- 2つの変数の関係に、左下から右上にの傾向がみられる場合は「正の相関」
+- 右下から左上の傾向がみられる場合は「負の相関」がある
+
+### サンプルデータ
+- coffee.csvファイルを読み込む
+  - degree: 温度
+  - ice_coffee: アイスコーヒーの売れた数
+  - hot_coffee: ホットコーヒーの売れた数
+
+```{r}
+coffe_df<-read.csv("C:/Users/cre/Desktop/r/coffe.csv")
+
+
+```
+
+```{r}
+plot(coffe_df$degree,coffe_df$ice_coffee,main="気温とアイスコーヒー")
+plot(coffe_df$degree,coffe_df$hot_coffee,main="気温とアイスコーヒー")
+
+```
+
+```{r}
+plot(coffe_df$degree, coffe_df$ice_coffee)
+abline(h = mean(coffe_df$ice_coffee)) # アイスコーヒーの平均
+abline(v = mean(coffe_df$degree)) # 気温の平均
+par(ps=36)
+text(
+  c(15,15,25,25),
+  
+  c(150,50,150,50),
+  labels=c("-","+","+","-")
+)
+
+```
+
+
+
+```{r}
+height<-c(170,164,169,170,169,172,172,163,165,177,171,168,170,170,166,170,168,177,170,179)
+weight<-c(57,46,58,62,57,64,73,58,51,70,59,58,56,67,55,61,61,71,62,72)
+
+plot(height,weight)
+abline(h=mean(weight))
+abline(h=mean(height))
+par(ps=36)
+text(
+  c(15,15,25,25),
+  
+  c(150,50,150,50),
+  labels=c("-","+","+","-")
+)
+```

@@ -1,0 +1,94 @@
+# 質的変数
+
+-   平均値、標準偏差は質的データに向かない
+-   質的変数は、データの出現回数（度数、頻度）に注目する（最頻値）
+-   質的変数を契約するには、度数分布表を作ることで、棒グラフや円グラフなどで表現できる
+
+## サンプルデータを準備
+
+-   A:5、B:3、C:2 というデータを準備する
+
+```{r}
+a<-rep("A",5)
+b<-rep("B",3)
+c<-rep("C",2)
+z<-c(a,b,c)
+z
+```
+
+### 度数分布表
+
+| データ | 度数 | 累積度数 |
+|--------|------|----------|
+| A      | 5    | 5        |
+| B      | 3    | 8        |
+| C      | 2    | 10       |
+
+
+```{r}
+table(z)
+```
+> 度数データを準備したら、グラフ化できる
+
+## 質的データの可視化（グラフ化）
+
+### 棒グラフ
+
+```{r}
+z_table <- table(z)
+barplot(z_table,col=c("red","green","blue"))
+```
+
+
+```{r}
+pie(z_table, clockwise = T, col=c("red", "green"))
+```
+```{r}
+barplot(matrix(table(z),ncol=1),col=c("red","green","blue"))
+```
+
+```{r}
+score<-read.csv("C:/Users/cre/Desktop/r/score.csv")
+score
+```
+```{r}
+pie(table(score$中間レポート), clockwise = T)
+pie(table(score$期末レポート), clockwise = T)
+```
+```{r}
+ 
+barplot(table(score$期末レポート))
+```
+
+
+
+```{r}
+score$期末レポート|>
+  table()|>
+  pie(clockwise=T)
+```
+
+## エクササイズ2
+- irisデータのSpeciesについて分析する
+- 先にネタバレしておくと、しておくと、
+  - Setosa: 50
+  - Versicolor: 50
+  - Virginica: 50
+```{r}
+iris$Species|>
+  table()|>
+  barplot()
+```
+```{r}
+iris2<-iris[iris$Sepal.Length>5.0,]
+
+
+iris2$Species|>
+  table()|>
+  barplot()
+```
+```{r}
+iris|>subset(Sepal.Length)->iris2
+iris2$Species|>table()|>barplot()
+```
+
