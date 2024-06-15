@@ -1,0 +1,187 @@
+```{r}
+mtcars
+mtcars$mpg|>mean()
+mtcars$mpg|>sd()
+mtcars$mpg|>IQR()
+mtcars$mpg|>median()
+
+```
+
+-全ての項目の平均値を確認する
+
+```{r}
+apply(mtcars,2,mean)
+apply(mtcars,2,sd)
+```
+
+```{r}
+apply(iris[,1:4],2,mean)
+apply(iris[,1:4],2,IQR)
+iris[,1:4]
+```
+
+```{r}
+iris$Sepal.Length|>hist()
+```
+
+# 2変数データの要約
+
+# 散布図
+
+# 共分散
+
+# 相関係数
+
+# 散布図
+
+-   2つの変数を横軸（X軸）、縦軸（Y軸）に対応させた図
+-   2つの変数の関係を「可視化」するために使う
+-   右上がりの傾向がみられる場合、正の相関、右下がりの傾向がみられる場合、負の相関
+
+```{r}
+
+setosa<-iris[iris$Species=="setosa", ]
+plot(setosa$Sepal.Length,setosa$Sepal.Width)
+```
+
+### ここまでのまとめ
+
+-   散布図から正の相関、負の相関を読み取れる
+-   が、その解釈は、読み手の主観による
+-   人によっては「正の相関がある」というかもしれないし「無相関だ」というかもしれない
+
+> なので、相関の度合いを数値で説明たいたい
+
+### 共分散
+
+-   2つの変数の関係を示す値
+-   2つの変数の関係が強いほど、値の絶対値が大きくなる（ただし単位の影響を受ける）
+
+$$
+S_{xy}=\frac{1}{n}\sum_{i=1}^n (x_i -\bar{x})(y_i-\bar{y})
+$$
+
+```{r}
+# Xの偏差ベクトル
+sl_deviation<-iris$Sepal.Length - mean(iris$Sepal.Length)
+
+# Yの偏差ベクトル
+sw_deviation<-iris$Sepal.Width - mean(iris$Sepal.Width)
+
+dev_mul<-sl_deviation*sw_deviation
+mean(dev_mul)
+
+cov(iris$Sepal.Length,iris$Sepal.Width)
+```
+
+> 注意して見ると、2つの実行結果の値は若干異なります。 RのCov関数は、最後に平均を求める際に、nで割らずにn-1で割ります （n-1で求める分散を不偏分散、不偏共分散、といいます）
+
+```{r}
+setosa<-iris[iris$Species=="setosa", ]
+cov(setosa$Sepal.Length,setosa$Sepal.Width)
+```
+
+### 相関係数
+
+-   2つの変数の関係を示す値
+-   相関係数は、-1～+1 の間の値をとる
+-   -1 に近いほど負の相関が強く、+1 に近いほど正の相関が強い
+-   相関係数は、共分散を「2つの変数の標準偏差の積」で除算することで算出できる
+
+$$
+r=\frac{S_{xy}}{s_x s_y}
+$$
+
+```{r}
+iris2<-data.frame(
+  sl=iris$Sepal.Length,
+  sw=iris$Sepal.Width,
+  sl_deviation=iris$Sepal.Length-mean(iris$Sepal.Length),
+  sw_deviation=iris$Sepal.Width-mean(iris$Sepal.width)
+)
+iris2
+
+iris2$dev2<-iris2$sl_deviation*iris2$sw_deviation
+iris2
+
+mean(iris2$dev2)
+cov(iris2$sl,iris2$sw)
+
+
+iris2$sl|>sd()
+iris2$sw|>sd()
+
+
+```
+
+```{r}
+cor(iris2$sl,iris2$sw)
+```
+
+### 相関係数の解釈について
+
+-   一般的な解釈の目安
+
+| 相関係数     | 大きさの評価           |
+|:-------------|:-----------------------|
+| 0.7 \~ 1.0   | 強い正の相関がある     |
+| 0.4 \~ 0.7   | 中程度の正の相関がある |
+| 0.2 \~ 0.4   | 弱い正の相関がある     |
+| -0.2 \~ 0.2  | ほとんど相関がない     |
+| -0.4 \~ -0.2 | 弱い負の相関がある     |
+| -0.7 \~ -0.4 | 中程度の負の相関がある |
+| -1.0 \~ -0.7 | 強い負の相関がある     |
+
+
+```{r}
+cor(setosa$Sepal.Length,setosa$Sepal.Width)
+```
+```{r}
+mtcars
+```
+
+- mpg（燃費）とdisp（排気量）にはどのような相関がありますか
+  - 散布図、共分散、相関係数を調べてください
+
+- disp（排気量）とwt（重さ）にはどのような相関がありますか
+  - 散布図、共分散、相関係数を調べてください
+
+- mpg（燃費）とwt（重さ）にはどのような相関がありますか
+  - 散布図、共分散、相関係数を調べてください
+
+
+```{r}
+plot(mtcars$mpg,mtcars$disp)
+cor(mtcars$mpg,mtcars$disp)
+```
+```{r}
+plot(mtcars$disp,mtcars$wt)
+cor(mtcars$disp,mtcars$wt)
+```
+```{r}
+anscombe
+```
+```{r}
+apply(anscombe,2,mean)
+apply(anscombe,2,sd)
+```
+
+```{r}
+cor(anscombe$x1,anscombe$x1)
+cor(anscombe$x2,anscombe$x2)
+cor(anscombe$x3,anscombe$x3)
+cor(anscombe$x4,anscombe$x4)
+```
+
+> anscombeデータセットのx1～x4は、平均も標準偏差も同じ（y1～y4も同様）
+> anscombeデータセットのx1とy1、...x4とy4は相関係数も同じ
+> ということは、x1 = x2 = x3 = x4 であり、y1 = y2 = y3 = y4 という関係がある？？
+
+- x1とy1を散布図で可視化してください
+- 同様にx2とy2、x3とy3、x4とy4の散布図を出力してください
+```{r}
+plot(anscombe$x1,anscombe$x1)
+plot(anscombe$x2,anscombe$x2)
+plot(anscombe$x3,anscombe$x3)
+plot(anscombe$x4,anscombe$x4)
+```
