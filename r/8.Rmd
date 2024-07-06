@@ -1,0 +1,95 @@
+# データを読む、とは何か
+
+-   中心傾向
+-   散布度
+
+たとえば、平均と分散がわかったら、それでデータを理解した！と言えるのか 答えはNo。なぜなら、平均：50、分散：10といっても、分布は様々であるから。
+
+-   形状
+    -   確率分布
+        -   正規分布
+        -   一様分布
+        -   二峰性の分布、などなど
+    -   ほかにも（せん）
+        -   尖度（せんど）
+            -   山のとがり具合、裾の広さ
+        -   歪度（わいど）
+            -   山が左右、どちらに偏るか
+
+次のテーマは「形状」を知ること。つまり、確率分布の解像度をあげていきます。
+
+## 1変数データの要約
+
+-   平均を調べる
+-   中央値、最頻値を調べる
+-   分散、標準偏差を調べる
+-   四分位数（25%、50%、75%）、四分位範囲、を調べる
+-   可視化する
+    -   ヒストグラム、箱ひげ図
+
+## 2変数データの要約
+
+-   変数間の関係を調べる
+    -   共分散、相関係数
+-   可視化する
+    -   散布図、クロス集計表
+
+## 具体例
+
+-   irisデータのstosaとvirginicaについて、Sapal.Lengthを比較します
+-   各データ50件ずつ、あります
+
+```{r}
+setosa <- iris[iris$Species == "setosa", ]
+virginica <- iris[iris$Species == "virginica", ]
+
+# setosaのSepal.Length
+print(mean(setosa$Sepal.Length))
+
+# virginicaのSepal.Length
+print(mean(virginica$Sepal.Length))
+
+# ヒストグラムで可視化する
+hist(setosa$Sepal.Length, breaks=20, col=rgb(1, 0, 0, 0.5), xlim=c(3, 8))
+hist(virginica$Sepal.Length, breaks=20, col=rgb(0, 1, 0, 0.5), add=T, xlim=c(3, 8))
+t.test(setosa$Sepal.Length,virginica$Sepal.Length)
+
+```
+
+## 参考：正規分布について
+
+-   世の中に登場するもっとも一般的な確率分布
+-   英語でNormal Distribution
+-   たとえば、植物の種子（花びらなど）のサイズ、工場の部品のサイズ、などなど
+
+```{r}
+# R言語には、正規分布に関するいくつかの関数が存在します
+
+# rnormは正規分布に従う乱数を生成する
+
+heights <- rnorm(1000,mean=170,sd=5)
+mean(heights)
+sd(heights)
+hist(heights,breaks = 20)
+```
+
+$$
+heights\sim N(170,25)
+
+$$
+>率論の分野では、確率変数というのが登場します。確率変数はXで表現することが一般的です。
+
+>は、●●分布に従う、と読む。
+
+>の場合、確率変数Xは平均：170、分散：25の正規分布に従う、と読む
+
+
+```{r}
+x<-seq(-3,3,0.1)
+y<-dnorm(x,mean=0,sd=1)
+plot(x,y,type="l")
+```
+
+
+
+
