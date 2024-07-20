@@ -1,0 +1,208 @@
+install.packages("tidyverse") library(tidyverse)
+
+iris %\>% as_tibble() %\>% filter(Species=="setosa") %\>% ggplot(aes(Sepal.Length,Sepal.Width))+ geom_point()
+
+# Tidyverse - tibble
+
+-   データフレームの操作を拡張するパッケージ
+-   tibbleのデータフレームを使うことで、出力が扱いやすくなる
+-   `tibble`関数、`as_tibble`関数によって、拡張されたデータフレーム（tibbleオブジェクト）を生成できる
+
+以下のサンプルコードは、`library(tidyverse)`や`library(tibble)`を実行した後に記述します。
+
+```{r}
+df<-tibble(
+  x=1:100,
+  y=2*x+1,
+  z=rep(c("A","B"),50)
+  
+)
+df
+```
+
+## tibble関数
+
+-   tibble関数によって、拡張されたデータフレーム（tibbleオブジェクト）を作成できる
+-   tibbleデータフレームは、コンソールに出力されたときに、整形されて表示される
+    -   デフォルトでは先頭の10行のみ表示される
+-   tibbleデータフレームは、標準のdata.frameの代替として使用できる
+
+## as_tibble関数
+
+-   標準のdata.frameオブジェクトをtibbleオブジェクトに変換する
+
+```{r}
+df <-data.frame(
+  x=1:100,
+  y=101,200
+  
+)
+df
+df2<-as_tibble(df)
+df2
+```
+
+### 補足：Rのas関数
+
+-   asで始まる関数は、データ型の変換を行う関数です
+-   isで始まる関数は、戻り値がbool型になる関数です
+
+## tibbleデータフレームの出力 - print関数
+
+-   tibbleのデータフレームの出力行数を変更するには、いくつかの方法がある
+-   print関数の引数 `n` を指定して、出力行数を変更できる
+-   print関数の引数 `n` に `Inf` を指定するとすべての行を出力できる
+
+```{r}
+iris_df <- as_tibble(iris)
+iris_df
+```
+
+```{r}
+df <- tribble(
+  ~X, ~Y, ~Z,
+  "A", 1, T,
+  "B", 2, F,
+  "C", 3, T,
+  "D", 4, F
+)
+df
+
+```
+
+# Tidyverse - dplyr
+
+-   データ操作を拡張するパッケージ
+-   filter関数による行の抽出、select関数による列の選択など、SQLに近い操作ができる
+-   `%>%` 演算子を組み合わせることで、データ操作が容易になる
+
+## 主要な関数
+
+| 関数名    | 概要       |
+|-----------|------------|
+| filter    | 行の選択   |
+| select    | 列の選択   |
+| mutate    | 列の更新   |
+| arrange   | 並び替え   |
+| group_by  | グループ化 |
+| summarize | 要約       |
+
+```{r}
+iris %>% as_tibble() %>% filter(Species=="setosa")
+```
+
+### filter関数 - AND検索
+
+-   filter関数を組み合わせることでAND検索できる
+
+```{r}
+iris %>%
+  as_tibble() %>%
+  filter(Species == "setosa") %>%
+  filter(Sepal.Length > 5.5)
+```
+
+-   filter関数には引数を複数指定できる
+
+```{r}
+iris %>%
+  as_tibble() %>%
+  filter(Species == "setosa", Sepal.Length > 5.5)
+```
+
+-   filter関数の引数に & 演算子を使う
+
+```{r}
+iris %>%
+  as_tibble() %>%
+  filter(Species == "setosa" & Sepal.Length > 5.5)
+```
+
+## select関数
+
+-   select関数の引数に列名を指定することで、表示する列を選択できる
+
+```{r}
+iris %>%
+  as_tibble() %>%
+  filter(Sepal.Length > 6) %>%
+  select(Sepal.Length, Sepal.Width)
+```
+
+-   starts_with関数
+    -   先頭文字の一致で列を選択する
+-   contains関数
+    -   特定の文字を含む列を選択する
+-   matches関数
+    -   正規表現で列を選択する
+```{r}
+iris %>% 
+  as_tibble() %>% 
+  select(matches("th$"))
+```
+- mutate関数によって、列を追加・更新できる
+
+```{r}
+iris %>%
+  as_tibble() %>%
+  mutate(
+    Sepal.Length.z = (Sepal.Length - mean(Sepal.Length)) / sd(Sepal.Length)
+  )
+```
+```{r}
+iris %>%
+  as_tibble() %>%
+  mutate(
+    Sepal.Length.z = (Sepal.Length - mean(Sepal.Length)) / sd(Sepal.Length), # Sepal.Lengthをzスコア化している
+    Sepal.Width.z = (Sepal.Width - mean(Sepal.Width)) / sd(Sepal.Width), # Sepal.Widthをzスコア化している
+    Size = ifelse(Sepal.Length.z > 1 & Sepal.Width.z > 1, "Large", "Small")
+  )
+```
+
+## arrange関数 - order by的な関数
+
+- arrange関数の引数に列名を指定することで、データをソートできる
+
+```{r}
+iris %>%
+  as_tibble() %>%
+  arrange(Sepal.Length)
+```
+
+## group_by関数 - summarize関数
+
+- group_by関数によって、データフレームをグループ化できる
+- グループ化したデータフレームにsummarize関数を使うことで、データを集計できる
+- summarize関数の引数には、min関数や、max関数、sum関数などを使用する
+```{r}
+iris %>% 
+  as_tibble() %>% 
+  group_by(Species) %>% 
+  summarise(
+    Sepal.Length.mean=mean(Sepal.Length)
+  )
+``` 
+
+```{r}
+starwars %>% 
+  filter(species=="Human") 
+```
+```{r}
+starwars %>% 
+  filter(species=="Human") %>% 
+  filter(height>180) %>% 
+  arrange(desc(height))
+```
+
+```{r}
+starwars %>% 
+  filter(!is.na(height)) %>% 
+  group_by(species) %>%
+  summarise(
+    x=mean(height)
+  )->s1
+
+print(s1,n=Inf)
+  
+  
+```
