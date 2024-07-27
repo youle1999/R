@@ -1,0 +1,251 @@
+# Tidyverse
+
+- データサイエンス用に設計されたRパッケージ集
+  - tibble
+    - データフレームの拡張パッケージ
+  - dplyr
+    - データ操作の拡張パッケージ
+  - ggplot2
+    - グラフ描画の拡張パッケージ
+  - ほかにもあります
+
+## Tidyverseのインストール
+
+```{r}
+install.packages("tidyverse")
+```
+#tibble
+```{r}
+library(tidyverse)
+iris %>%  as_tibble()
+
+#dplyr
+iris %>% 
+  filter(Sepal.Length>7) %>% 
+  select(
+    Sepal.Length,
+    Sepal.Width
+  ) %>% 
+  mutate(
+    total=Sepal.Length+Sepal.Width
+    
+  ) %>% 
+  arrange(total)
+  
+```
+
+```{r}
+# iris のグループ化
+iris %>% as_tibble() %>%
+  group_by(Species) %>%
+  summarise(
+    mean(Sepal.Length),
+    mean(Sepal.Width),
+  )
+```
+
+```{r}
+# データフレーム（テーブル）の結合
+emp <- tribble(
+  ~id, ~name, ~dept_id,
+  1, "Andy", 1,
+  2, "Betty", 1,
+  3, "Carol", 2,
+)
+emp
+```
+
+```{r}
+# 部署 (Dept)
+dept <- tribble(
+  ~id, ~name2,
+  1, "Sales",
+  2, "Development",
+  3, "Accounting",
+)
+dept
+```
+```{r}
+emp %>% inner_join(dept,by=c("dept_id"="id"))
+dept %>% left_join(emp,by=c("id"="id"))
+```
+
+
+```{r}
+library(tidyverse)
+```
+## ggplot2
+
+- データを可視化する（グラフ化する）パッケージ
+- グラフィックス文法（The Grammar of Graphics）を実装している
+- `+` 演算子でレイヤーを重ねるようにプログラミングする
+
+```{r}
+iris %>% 
+  as_tibble() %>% 
+  ggplot(aes(x=Sepal.Length,y=Sepal.Width))+
+  geom_point()+
+  geom_smooth(method="lm", se=F)+
+  theme_minimal()
+```
+
+-Themes
+-Coordinate
+-statistics
+-Facets
+-Geometrics
+-Aesthetics
+-Data
+
+- ggplot 関数で出力するデータを受け取る
+- `+` 演算子でレイヤーを重ねていく
+- geom_point 関数で散布図を出力する
+
+```{r}
+# 名前付き引数
+#ggplot(data = iris) +
+  #geom_point(mapping = aes(x = Sepal.Length, y = Sepal.Width))
+# 名前付き引数なし
+ggplot(iris) +
+  geom_point(aes(Sepal.Length, Sepal.Width))
+
+```
+
+### エステティック属性 - Aesthetics
+
+- aes関数でX軸、Y軸に表示するデータを定義する
+- プロットのカラー、サイズ、スタイルなどをカスタマイズできる
+- たとえばcolor属性でカラーを指定できる
+
+```{r}
+ggplot(iris) +
+  geom_point(aes(x = Sepal.Length, y = Sepal.Width, color = Species))
+
+```
+### 幾何オブジェクト - Geometrics
+
+- geom_ で始まる関数で、幾何オブジェクト（グラフ）を表示できる
+- geom_point 関数は散布図を表示する
+- geom_hist 関数はヒストグラムを表示する
+
+```{r}
+# ヒストグラム
+ggplot(iris) +
+  geom_histogram(aes(x = Sepal.Length,fill=Species))
+
+```
+```{r}
+# ヒストグラム
+# 種のデータ (setosaのみ) グラフ化したい
+iris %>%
+  filter(Species == "setosa") %>%
+  ggplot() +
+  geom_histogram(aes(x = Sepal.Length, fill = Species), bins = 14) # fillは塗りつぶし, colorは枠
+
+```
+```{r}
+# 箱ひげ図 - 1変数のグラフ化
+iris %>%
+  ggplot() +
+  geom_boxplot(aes(x = Sepal.Length, fill = Species)) # Speciesごとに分割表示
+
+```
+```{r}
+iris %>%
+  ggplot() +
+  geom_point(aes(x = Sepal.Length, y = Sepal.Width,color=Species))+
+  facet_wrap(~Species)
+
+```
+### Statistics - 統計変換 (平均を求めるとか、度数を計算するとか、回帰係数の計算とか)
+
+- 統計変換は、geom_関数などの内部で実装されている
+- コードの見た目にはわかりにくいので注意
+- geom_histogramでは、内部で度数の計算が行われている
+- stat引数で、内部の計算処理をカスタマイズできる
+  - stat = "bin" 度数の計算
+  - stat = "count" 同一データの個数をカウント
+
+```{r}
+# ヒストグラム：コードの内部で「度数」を計算している
+iris %>%
+  ggplot() +
+  geom_histogram(aes(Sepal.Length),stat="bin")
+
+```
+```{r}
+iris %>%
+  ggplot() +
+  geom_boxplot(aes(Sepal.Length, fill = Species)) +
+  coord_flip() # デフォルト横表示が、縦表示になる
+
+
+```
+
+```{r}
+iris %>% 
+   ggplot(aes(Sepal.Length,Sepal.Width, color=Species)) +
+  geom_point()+
+  theme_classic()
+  
+```
+```{r}
+diamonds %>% 
+  filter(cut == "Premium") %>% 
+  filter(color=="E") %>% 
+  ggplot() + 
+  geom_histogram(aes(x = price))
+  
+  
+  
+
+  
+
+```
+  
+```{r}
+
+diamonds %>% 
+  ggplot(aes(x = carat,y=price,color=cut)) +
+  geom_point()+
+  facet_wrap(~cut)
+
+```
+  
+  
+  
+## 確率
+
+### 確率の加法定理 I
+
+- 複数の異なる事象について、確率を考える
+- ここでは、和事象の確率 P(A∪B) に関する加法定理を取り上げる
+- 加法定理では、2つの事象、A、Bが排反であるかどうか、に注意する
+
+
+### 加法定理
+
+- 事象Aと事象Bが排反事象ではないとき、以下の式が成立する
+
+$$
+P(A\cup B)=P(A)+P(B)-P(A \cap B)
+$$
+### 例：サイコロのケース
+
+- サイコロを振って奇数が出る事象A
+  - {1, 3, 5}
+- サイコロを振って3以下が出る事象B
+  - {1, 2, 3}
+- P(A∪B) はいくつになるか
+
+P(A) = 3/6
+P(B) = 3/6
+P(A∩B) = 2/6
+
+P(A∪B) = 3/6 + 3/6 - 2/6 = 4/6
+
+
+
+
+
+
