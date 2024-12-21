@@ -1,0 +1,41 @@
+# おさらい
+
+## 正規分布
+-- 正規分布の2つのパラメータ
+  - 平均(mean)
+  - 分散（variance）
+- 標準正規分布とは、〇〇な正規分布
+- 標準正規分布は、-?? ～ +?? の範囲に約95％のデータが存在する
+
+```{r}
+x <- seq(-3, 3, 0.1)
+y <- dnorm(x, mean = 0, sd = 1)
+plot(x, y, type="l")
+abline(v=-1.96)
+abline(v=1.96)
+```
+## t分布
+
+
+### データの標準化
+- zは平均0、分散:1の分布になる
+
+$$
+z = \frac{x - \mu}{\sigma}
+$$
+```{r}
+math_score<-c(90,80,70,75,85,90,80,80,70,60)
+math_score_mean<-mean(math_score)
+math_score_sd<-sd(math_score)
+
+math_score_z<-(math_score-math_score_mean)/math_score_sd
+math_score_z
+math_score_mean
+#偏差値z*10+50　したら偏差値
+math_score_z*10+50
+#ところで、テストの点数を偏差値にすると何が嬉しいの？
+
+# 偏差値が60ということは、標準偏差1個分平均から離れている
+# 偏差値が70ということは、標準偏差2個分平均から離れている
+
+```
